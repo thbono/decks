@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -90,12 +89,10 @@ public class GameControllerTestIT {
 
     @Test
     public void test06_removePlayer() throws Exception {
-        mvc.perform(delete("/games/3/players/4"))
-                .andExpect(status().isNotFound());
-        mvc.perform(delete("/games/1/players/58"))
+        mvc.perform(delete("/games/3/players/112"))
                 .andExpect(status().isNotFound());
 
-        mvc.perform(delete("/games/1/players/4").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(delete("/games/1/players/112").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.players", hasSize(2)));
@@ -103,24 +100,24 @@ public class GameControllerTestIT {
 
     @Test
     public void test07_dealCard() throws Exception {
-        mvc.perform(post("/games/3/players/4/cards"))
+        mvc.perform(post("/games/3/players/110/cards"))
                 .andExpect(status().isNotFound());
-        mvc.perform(post("/games/1/players/58/cards"))
+        mvc.perform(post("/games/1/players/112/cards"))
                 .andExpect(status().isNotFound());
 
-        mvc.perform(post("/games/1/players/4/cards").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(post("/games/1/players/110/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
     public void test08_getPlayerCards() throws Exception {
-        mvc.perform(get("/games/3/players/4/cards"))
+        mvc.perform(get("/games/3/players/110/cards"))
                 .andExpect(status().isNotFound());
-        mvc.perform(get("/games/1/players/58/cards"))
+        mvc.perform(get("/games/1/players/112/cards"))
                 .andExpect(status().isNotFound());
 
-        mvc.perform(get("/games/1/players/4/cards").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/games/1/players/110/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -133,7 +130,8 @@ public class GameControllerTestIT {
         mvc.perform(get("/games/1/players").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].name", startsWith("Player")));
     }
 
     @Test
@@ -186,7 +184,7 @@ public class GameControllerTestIT {
 
     private void addPlayerAndExpectSize(final Integer size) throws Exception {
         mvc.perform(post("/games/1/players").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.players", hasSize(size)));
     }

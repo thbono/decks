@@ -41,18 +41,48 @@ public class GameServiceTest {
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
-    public void shouldNotPinDeckWhereThereIsNoGame() {
+    public void shouldNotPinDeckWhenThereIsNoGame() {
         service.pinDeck(2L, 1L);
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
-    public void shouldNotPinDeckWhereThereIsNoDeck() {
+    public void shouldNotPinDeckWhenThereIsNoDeck() {
         service.pinDeck(1L, 2L);
     }
 
     @Test
     public void pinDeck() {
         Assert.assertEquals(1, service.pinDeck(1L, 1L).getDecks().size());
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void shouldNotAddPlayerWhenThereIsNoGame() {
+        service.addPlayer(2L);
+    }
+
+    @Test
+    public void addPlayer() {
+        Assert.assertEquals(1, service.addPlayer(1L).getPlayers().size());
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void shouldNotRemovePlayerWhenThereIsNoGame() {
+        service.removePlayer(2L, 3L);
+    }
+
+    @Test
+    public void removePlayer() {
+        Assert.assertTrue(service.removePlayer(1L, 3L).getPlayers().isEmpty());
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void shouldNotGetPlayersWhenThereIsNoGame() {
+        service.getPlayers(2L);
+    }
+
+    @Test
+    public void getPlayers() {
+        Assert.assertTrue(service.getPlayers(1L).isEmpty());
     }
 
 }

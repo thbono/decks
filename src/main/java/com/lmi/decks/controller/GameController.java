@@ -52,7 +52,7 @@ public class GameController {
     @PostMapping("/games/{id}/players")
     public ResponseEntity<Game> addPlayer(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.addPlayer(id));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }
@@ -61,7 +61,7 @@ public class GameController {
     @DeleteMapping("/games/{gameId}/players/{playerId}")
     public ResponseEntity<Game> removePlayer(@PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.removePlayer(gameId, playerId));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }
@@ -88,7 +88,7 @@ public class GameController {
     @GetMapping("/games/{id}/players")
     public ResponseEntity getPlayers(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.getPlayers(id));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }

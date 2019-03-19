@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Entity
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -25,6 +26,10 @@ public class Game {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Deck> decks = new ArrayList<>();
 
+    @Fetch(FetchMode.SELECT)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Player> players = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -33,8 +38,23 @@ public class Game {
         return Collections.unmodifiableList(decks);
     }
 
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(players);
+    }
+
     public Game addDeck(final Deck deck) {
         decks.add(Optional.ofNullable(deck).orElseThrow(() -> new IllegalArgumentException("Deck cannot be null")));
+        return this;
+    }
+
+    public Game addPlayer() {
+        players.add(new Player(players.size() + 1));
+        return this;
+    }
+
+    public Game removePlayerById(final long playerId) {
+        final int index = IntStream.range(0, players.size()).filter(i -> players.get(i).getId().equals(playerId)).findFirst().orElse(-1);
+        if (index >= 0) players.remove(index);
         return this;
     }
 
