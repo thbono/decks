@@ -74,8 +74,8 @@ public class GameControllerTestIT {
         mvc.perform(put("/games/1/decks/58"))
                 .andExpect(status().isNotFound());
 
-        pindDeckAndExpectSize(4, 1);
-        pindDeckAndExpectSize(57, 2);
+        pinDeckAndExpectSize(4, 1);
+        pinDeckAndExpectSize(57, 2);
     }
 
     @Test
@@ -83,9 +83,9 @@ public class GameControllerTestIT {
         mvc.perform(post("/games/3/players"))
                 .andExpect(status().isNotFound());
 
-        mvc.perform(post("/games/1/players").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        addPlayerAndExpectSize(1);
+        addPlayerAndExpectSize(2);
+        addPlayerAndExpectSize(3);
     }
 
     @Test
@@ -97,7 +97,8 @@ public class GameControllerTestIT {
 
         mvc.perform(delete("/games/1/players/4").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.players", hasSize(2)));
     }
 
     @Test
@@ -131,7 +132,8 @@ public class GameControllerTestIT {
 
         mvc.perform(get("/games/1/players").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test
@@ -141,7 +143,8 @@ public class GameControllerTestIT {
 
         mvc.perform(get("/games/1/suits").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(4)));
     }
 
     @Test
@@ -151,7 +154,8 @@ public class GameControllerTestIT {
 
         mvc.perform(get("/games/1/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(51)));
     }
 
     @Test
@@ -161,7 +165,9 @@ public class GameControllerTestIT {
 
         mvc.perform(put("/games/1/shuffle").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.decks", hasSize(2)))
+                .andExpect(jsonPath("$.players", hasSize(4)));
     }
 
     private void createAndExpectId(final Integer id) throws Exception {
@@ -171,11 +177,18 @@ public class GameControllerTestIT {
                 .andExpect(jsonPath("$.id", is(id)));
     }
 
-    private void pindDeckAndExpectSize(final Integer deckId, final Integer size) throws Exception {
+    private void pinDeckAndExpectSize(final Integer deckId, final Integer size) throws Exception {
         mvc.perform(put("/games/1/decks/" + deckId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.decks", hasSize(size)));
+    }
+
+    private void addPlayerAndExpectSize(final Integer size) throws Exception {
+        mvc.perform(post("/games/1/players").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.players", hasSize(size)));
     }
 
 }
