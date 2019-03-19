@@ -7,6 +7,7 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,14 @@ public class Game {
     @Fetch(FetchMode.JOIN)
     @OneToMany(fetch = FetchType.EAGER)
     private List<Deck> decks = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<Deck> getDecks() {
+        return Collections.unmodifiableList(decks);
+    }
 
     public Game addDeck(final Deck deck) {
         decks.add(Optional.ofNullable(deck).orElseThrow(() -> new IllegalArgumentException("Deck cannot be null")));

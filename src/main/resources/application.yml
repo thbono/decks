@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: jdbc:h2:./decks-db
@@ -10,3 +9,13 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
+
+---
+
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:decks-db
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

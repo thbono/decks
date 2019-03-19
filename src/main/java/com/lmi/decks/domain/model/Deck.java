@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.PrimitiveIterator;
 import java.util.stream.Collectors;
@@ -28,8 +29,16 @@ public class Deck {
         cards = new ArrayList<>();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     private Deck(List<Card> cards) {
         this.cards = cards;
+    }
+
+    List<Card> getCards() {
+        return Collections.unmodifiableList(cards);
     }
 
     public static Deck build() {

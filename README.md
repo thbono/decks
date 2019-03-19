@@ -10,6 +10,13 @@ The rest API will be available at:
 
     http://localhost:8080
 
+To run unit tests:
+
+    mvn test
+    
+To run integration tests:
+
+    mvn integration-test    
 
 ## API
 

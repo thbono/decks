@@ -8,6 +8,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 public class GameController {
 
@@ -18,8 +20,9 @@ public class GameController {
     private GameService service;
 
     @PostMapping("/games")
-    public Game create() {
-        return repository.save(new Game());
+    public ResponseEntity<Game> create() {
+        final Game game = repository.save(new Game());
+        return ResponseEntity.created(URI.create("/games" + game.getId())).body(game);
     }
 
     @GetMapping("/games")

@@ -29,4 +29,9 @@ public class Card {
         this.suit = suit;
         this.face = face;
     }
+
+    Suit getSuit() {
+        return suit;
+    }
+
 }
