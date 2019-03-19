@@ -16,7 +16,7 @@ To run unit tests:
     
 To run integration tests:
 
-    mvn integration-test    
+    mvn verify   
 
 ## API
 
