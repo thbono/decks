@@ -1,6 +1,7 @@
 package com.lmi.decks.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Entity
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -40,6 +42,11 @@ public class Game {
 
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
+    }
+
+    @JsonIgnore
+    public Stream<Card> getCardStream() {
+        return decks.stream().flatMap(d -> d.getCards().stream());
     }
 
     public Game addDeck(final Deck deck) {

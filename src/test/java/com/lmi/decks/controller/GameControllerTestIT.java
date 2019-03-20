@@ -29,6 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class GameControllerTestIT {
 
+    private static final String DECKS = "$.decks";
+    private static final String PLAYERS = "$.players";
+
     private MockMvc mvc;
 
     @Autowired
@@ -41,14 +44,14 @@ public class GameControllerTestIT {
 
 
     @Test
-    public void test01_create() throws Exception {
+    public void test01create() throws Exception {
         createAndExpectId(1);
         createAndExpectId(2);
         createAndExpectId(3);
     }
 
     @Test
-    public void test02_delete() throws Exception {
+    public void test02delete() throws Exception {
         mvc.perform(delete("/games/3"))
                 .andExpect(status().isNoContent());
         mvc.perform(delete("/games/3"))
@@ -56,7 +59,7 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test03_findAll() throws Exception {
+    public void test03findAll() throws Exception {
         mvc.perform(get("/games").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -64,7 +67,7 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test04_pinDeck() throws Exception {
+    public void test04pinDeck() throws Exception {
         DeckControllerTestIT.createAndExpectId(mvc, 4);
         DeckControllerTestIT.createAndExpectId(mvc, 57);
 
@@ -78,7 +81,7 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test05_addPlayer() throws Exception {
+    public void test05addPlayer() throws Exception {
         mvc.perform(post("/games/3/players"))
                 .andExpect(status().isNotFound());
 
@@ -88,18 +91,18 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test06_removePlayer() throws Exception {
+    public void test06removePlayer() throws Exception {
         mvc.perform(delete("/games/3/players/112"))
                 .andExpect(status().isNotFound());
 
         mvc.perform(delete("/games/1/players/112").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.players", hasSize(2)));
+                .andExpect(jsonPath(PLAYERS, hasSize(2)));
     }
 
     @Test
-    public void test07_dealCard() throws Exception {
+    public void test07dealCard() throws Exception {
         mvc.perform(post("/games/3/players/110/cards"))
                 .andExpect(status().isNotFound());
         mvc.perform(post("/games/1/players/112/cards"))
@@ -108,12 +111,12 @@ public class GameControllerTestIT {
         mvc.perform(post("/games/1/players/110/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.decks", hasSize(2)))
-                .andExpect(jsonPath("$.players", hasSize(2)));
+                .andExpect(jsonPath(DECKS, hasSize(2)))
+                .andExpect(jsonPath(PLAYERS, hasSize(2)));
     }
 
     @Test
-    public void test08_getPlayerCards() throws Exception {
+    public void test08getPlayerCards() throws Exception {
         mvc.perform(get("/games/3/players/110/cards"))
                 .andExpect(status().isNotFound());
 
@@ -124,7 +127,7 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test09_getPlayers() throws Exception {
+    public void test09getPlayers() throws Exception {
         mvc.perform(get("/games/3/players"))
                 .andExpect(status().isNotFound());
 
@@ -137,7 +140,7 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test10_getSuits() throws Exception {
+    public void test10getSuits() throws Exception {
         mvc.perform(get("/games/3/suits"))
                 .andExpect(status().isNotFound());
 
@@ -151,7 +154,7 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test11_getCards() throws Exception {
+    public void test11getCards() throws Exception {
         mvc.perform(get("/games/3/cards"))
                 .andExpect(status().isNotFound());
 
@@ -162,19 +165,19 @@ public class GameControllerTestIT {
     }
 
     @Test
-    public void test12_shuffle() throws Exception {
+    public void test12shuffle() throws Exception {
         mvc.perform(put("/games/3/shuffle"))
                 .andExpect(status().isNotFound());
 
         mvc.perform(put("/games/1/shuffle").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.decks", hasSize(2)))
-                .andExpect(jsonPath("$.players", hasSize(2)));
+                .andExpect(jsonPath(DECKS, hasSize(2)))
+                .andExpect(jsonPath(PLAYERS, hasSize(2)));
     }
 
     @Test
-    public void test13_deleteCompleteGame() throws Exception {
+    public void test13deleteCompleteGame() throws Exception {
         mvc.perform(delete("/games/1"))
                 .andExpect(status().isNoContent());
     }
@@ -190,14 +193,14 @@ public class GameControllerTestIT {
         mvc.perform(put("/games/1/decks/" + deckId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.decks", hasSize(size)));
+                .andExpect(jsonPath(DECKS, hasSize(size)));
     }
 
     private void addPlayerAndExpectSize(final Integer size) throws Exception {
         mvc.perform(post("/games/1/players").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.players", hasSize(size)));
+                .andExpect(jsonPath(PLAYERS, hasSize(size)));
     }
 
 }
