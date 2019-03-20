@@ -37,7 +37,7 @@ public class Deck {
         this.cards = cards;
     }
 
-    List<Card> getCards() {
+    public List<Card> getCards() {
         return Collections.unmodifiableList(cards);
     }
 

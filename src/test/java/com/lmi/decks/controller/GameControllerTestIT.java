@@ -114,12 +114,11 @@ public class GameControllerTestIT {
     public void test08_getPlayerCards() throws Exception {
         mvc.perform(get("/games/3/players/110/cards"))
                 .andExpect(status().isNotFound());
-        mvc.perform(get("/games/1/players/112/cards"))
-                .andExpect(status().isNotFound());
 
         mvc.perform(get("/games/1/players/110/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
@@ -142,7 +141,7 @@ public class GameControllerTestIT {
         mvc.perform(get("/games/1/suits").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(jsonPath("$.DIAMONDS", is(26)));
     }
 
     @Test
@@ -152,8 +151,7 @@ public class GameControllerTestIT {
 
         mvc.perform(get("/games/1/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(51)));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -166,6 +164,12 @@ public class GameControllerTestIT {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.decks", hasSize(2)))
                 .andExpect(jsonPath("$.players", hasSize(4)));
+    }
+
+    @Test
+    public void test13_deleteCompleteGame() throws Exception {
+        mvc.perform(delete("/games/1"))
+                .andExpect(status().isNoContent());
     }
 
     private void createAndExpectId(final Integer id) throws Exception {

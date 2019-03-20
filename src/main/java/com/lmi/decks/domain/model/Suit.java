@@ -7,8 +7,8 @@ public enum Suit {
 
     HEARTS(1),
     SPADES(2),
-    CLUBS(4),
-    DIAMONDS(5);
+    CLUBS(3),
+    DIAMONDS(4);
 
     private int height;
 
@@ -16,7 +16,7 @@ public enum Suit {
         this.height = height;
     }
 
-    static Stream<Suit> stream() {
+    public static Stream<Suit> stream() {
         return Arrays.stream(Suit.values());
     }
 

@@ -21,6 +21,8 @@ public class Card {
 
     private Face face;
 
+    private Long playerId;
+
     public Card() {
     }
 
@@ -30,8 +32,16 @@ public class Card {
         this.face = face;
     }
 
-    Suit getSuit() {
+    public Suit getSuit() {
         return suit;
+    }
+
+    public boolean isOnDeck() {
+        return playerId == null;
+    }
+
+    public boolean isDealtToPlayer(final Long playerId) {
+        return this.playerId != null && this.playerId.equals(playerId);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.lmi.decks.controller;
 
+import com.lmi.decks.domain.model.Card;
 import com.lmi.decks.domain.model.Game;
+import com.lmi.decks.domain.model.Suit;
 import com.lmi.decks.domain.repository.GameRepository;
 import com.lmi.decks.domain.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class GameController {
@@ -77,9 +81,9 @@ public class GameController {
     }
 
     @GetMapping("/games/{gameId}/players/{playerId}/cards")
-    public ResponseEntity getPlayerCards(@PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
+    public ResponseEntity<List<Card>> getPlayerCards(@PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.getPlayerCards(gameId, playerId));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }
@@ -95,9 +99,9 @@ public class GameController {
     }
 
     @GetMapping("/games/{id}/suits")
-    public ResponseEntity getSuits(@PathVariable("id") Long id) {
+    public ResponseEntity<Map<Suit, Long>> getSuits(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.getSuits(id));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }

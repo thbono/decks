@@ -1,8 +1,6 @@
 package com.lmi.decks.domain.service;
 
-import com.lmi.decks.domain.model.Deck;
-import com.lmi.decks.domain.model.Game;
-import com.lmi.decks.domain.model.Player;
+import com.lmi.decks.domain.model.*;
 import com.lmi.decks.domain.repository.DeckRepository;
 import com.lmi.decks.domain.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -37,13 +37,33 @@ public class GameService {
     @Transactional
     public Game removePlayer(final Long gameId, final Long playerId) {
         final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        // TODO: release player's cards
         return repository.save(game.removePlayerById(playerId));
     }
 
     @Transactional(readOnly = true)
     public List<Player> getPlayers(final Long gameId) {
         final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        // TODO: sum player's cards
         return game.getPlayers();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<Suit, Long> getSuits(final Long gameId) {
+        final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        return game.getDecks().stream()
+                .flatMap(d -> d.getCards().stream())
+                .filter(Card::isOnDeck)
+                .collect(Collectors.groupingBy(Card::getSuit, Collectors.counting()));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Card> getPlayerCards(final Long gameId, final Long playerId) {
+        final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        return game.getDecks().stream()
+                .flatMap(d -> d.getCards().stream())
+                .filter(c -> c.isDealtToPlayer(playerId))
+                .collect(Collectors.toList());
     }
 
 }
