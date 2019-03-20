@@ -106,8 +106,10 @@ public class GameControllerTestIT {
                 .andExpect(status().isNotFound());
 
         mvc.perform(post("/games/1/players/110/cards").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.decks", hasSize(2)))
+                .andExpect(jsonPath("$.players", hasSize(2)));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class GameControllerTestIT {
         mvc.perform(get("/games/1/players/110/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     @Test
@@ -130,7 +132,8 @@ public class GameControllerTestIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name", startsWith("Player")));
+                .andExpect(jsonPath("$[0].name", startsWith("Player")))
+                .andExpect(jsonPath("$[0].total", is(1)));
     }
 
     @Test
@@ -141,6 +144,9 @@ public class GameControllerTestIT {
         mvc.perform(get("/games/1/suits").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.HEARTS", is(25)))
+                .andExpect(jsonPath("$.SPADES", is(26)))
+                .andExpect(jsonPath("$.CLUBS", is(26)))
                 .andExpect(jsonPath("$.DIAMONDS", is(26)));
     }
 
@@ -151,7 +157,8 @@ public class GameControllerTestIT {
 
         mvc.perform(get("/games/1/cards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(103)));
     }
 
     @Test
@@ -163,7 +170,7 @@ public class GameControllerTestIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.decks", hasSize(2)))
-                .andExpect(jsonPath("$.players", hasSize(4)));
+                .andExpect(jsonPath("$.players", hasSize(2)));
     }
 
     @Test

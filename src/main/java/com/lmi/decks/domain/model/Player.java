@@ -2,10 +2,7 @@ package com.lmi.decks.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -17,6 +14,9 @@ public class Player {
 
     private String name;
 
+    @Transient
+    private Integer total;
+
     Player() {
         name = "Unknown";
     }
@@ -25,11 +25,19 @@ public class Player {
         name = String.format("Player %d", player);
     }
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
     String getName() {
         return name;
+    }
+
+    public void setTotal(final Integer total) {
+        this.total = total;
+    }
+
+    public Integer getTotal() {
+        return total;
     }
 }

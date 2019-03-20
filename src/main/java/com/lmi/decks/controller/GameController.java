@@ -2,6 +2,7 @@ package com.lmi.decks.controller;
 
 import com.lmi.decks.domain.model.Card;
 import com.lmi.decks.domain.model.Game;
+import com.lmi.decks.domain.model.Player;
 import com.lmi.decks.domain.model.Suit;
 import com.lmi.decks.domain.repository.GameRepository;
 import com.lmi.decks.domain.service.GameService;
@@ -74,7 +75,7 @@ public class GameController {
     @PostMapping("/games/{gameId}/players/{playerId}/cards")
     public ResponseEntity<Game> dealCard(@PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.dealCard(gameId, playerId));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }
@@ -90,7 +91,7 @@ public class GameController {
     }
 
     @GetMapping("/games/{id}/players")
-    public ResponseEntity getPlayers(@PathVariable("id") Long id) {
+    public ResponseEntity<List<Player>> getPlayers(@PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(service.getPlayers(id));
         } catch (EmptyResultDataAccessException e) {
@@ -108,9 +109,9 @@ public class GameController {
     }
 
     @GetMapping("/games/{id}/cards")
-    public ResponseEntity getCards(@PathVariable("id") Long id) {
+    public ResponseEntity<List<Card>> getCards(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.getCards(id));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }
@@ -119,7 +120,7 @@ public class GameController {
     @PutMapping("/games/{id}/shuffle")
     public ResponseEntity<Game> shuffle(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.shuffle(id));
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.notFound().build();
         }

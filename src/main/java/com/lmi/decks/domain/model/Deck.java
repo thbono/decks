@@ -22,7 +22,7 @@ public class Deck {
     private Long id;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Card> cards;
 
     public Deck() {

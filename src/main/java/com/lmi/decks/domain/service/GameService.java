@@ -8,8 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,15 +36,39 @@ public class GameService {
     @Transactional
     public Game removePlayer(final Long gameId, final Long playerId) {
         final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
-        // TODO: release player's cards
+        game.getDecks().stream()
+                .flatMap(d -> d.getCards().stream())
+                .filter(c -> c.isDealtToPlayer(playerId))
+                .forEach(c -> c.setPlayerId(null));
         return repository.save(game.removePlayerById(playerId));
+    }
+
+    @Transactional
+    public Game dealCard(final Long gameId, final Long playerId) {
+        final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        game.getPlayers().stream().filter(p -> p.getId().equals(playerId)).findFirst()
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        final Optional<Card> card = game.getDecks().stream()
+                .flatMap(d -> d.getCards().stream())
+                .sorted(Comparator.comparingInt(Card::getPosition))
+                .filter(Card::isOnDeck).findFirst();
+        card.ifPresent(c -> c.setPlayerId(playerId));
+        return repository.save(game);
     }
 
     @Transactional(readOnly = true)
     public List<Player> getPlayers(final Long gameId) {
         final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
-        // TODO: sum player's cards
-        return game.getPlayers();
+        game.getPlayers().forEach(p ->
+            p.setTotal(game.getDecks().stream()
+                    .flatMap(d -> d.getCards().stream())
+                    .filter(c -> c.isDealtToPlayer(p.getId()))
+                    .mapToInt(Card::getHeight).sum())
+        );
+        return game.getPlayers().stream()
+                .sorted(Comparator.comparingInt(Player::getTotal).reversed())
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -58,12 +81,31 @@ public class GameService {
     }
 
     @Transactional(readOnly = true)
+    public List<Card> getCards(final Long gameId) {
+        final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        return game.getDecks().stream()
+                .flatMap(d -> d.getCards().stream())
+                .filter(Card::isOnDeck)
+                .sorted().collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<Card> getPlayerCards(final Long gameId, final Long playerId) {
         final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
         return game.getDecks().stream()
                 .flatMap(d -> d.getCards().stream())
                 .filter(c -> c.isDealtToPlayer(playerId))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Game shuffle(final Long gameId) {
+        final Random random = new Random();
+        final Game game = repository.findById(gameId).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        game.getDecks().stream()
+                .flatMap(d -> d.getCards().stream())
+                .forEach(c -> c.setPosition(random.nextInt()));
+        return repository.save(game);
     }
 
 }

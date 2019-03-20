@@ -25,6 +25,10 @@ public enum Face {
         this.height = height;
     }
 
+    int getHeight() {
+        return height;
+    }
+
     static Stream<Face> stream() {
         return Arrays.stream(Face.values());
     }

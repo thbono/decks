@@ -16,6 +16,10 @@ public enum Suit {
         this.height = height;
     }
 
+    int getHeight() {
+        return height;
+    }
+
     public static Stream<Suit> stream() {
         return Arrays.stream(Suit.values());
     }
